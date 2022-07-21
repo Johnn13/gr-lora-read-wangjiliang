@@ -1,0 +1,38 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/szu-iot/gr-lora-jkadbear/swig/lora_swig.i
+gnuradio.i
+/home/szu-iot/gr-lora-jkadbear/swig/gnuradio.i
+lora_swig_doc.i
+/home/szu-iot/gr-lora-jkadbear/swig/lora_swig_doc.i
+lora/demod.h
+/home/szu-iot/gr-lora-jkadbear/swig/lora/demod.h
+lora/mod.h
+/home/szu-iot/gr-lora-jkadbear/swig/lora/mod.h
+lora/pyramid_demod.h
+/home/szu-iot/gr-lora-jkadbear/swig/lora/pyramid_demod.h
+lora/decode.h
+/home/szu-iot/gr-lora-jkadbear/swig/lora/decode.h
+lora/encode.h
+/home/szu-iot/gr-lora-jkadbear/swig/lora/encode.h
+lora/copy_cc.h
+/home/szu-iot/gr-lora-jkadbear/swig/lora/copy_cc.h
+lora/demod.h
+/home/szu-iot/gr-lora-jkadbear/swig/lora/demod.h
+lora/mod.h
+/home/szu-iot/gr-lora-jkadbear/swig/lora/mod.h
+lora/pyramid_demod.h
+/home/szu-iot/gr-lora-jkadbear/swig/lora/pyramid_demod.h
+lora/decode.h
+/home/szu-iot/gr-lora-jkadbear/swig/lora/decode.h
+lora/encode.h
+/home/szu-iot/gr-lora-jkadbear/swig/lora/encode.h
+lora/copy_cc.h
+/home/szu-iot/gr-lora-jkadbear/swig/lora/copy_cc.h
+

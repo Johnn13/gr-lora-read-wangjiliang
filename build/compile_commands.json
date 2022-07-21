@@ -1,0 +1,42 @@
+[
+{
+  "directory": "/home/szu-iot/gr-lora-jkadbear/build/lib",
+  "command": "/usr/bin/c++  -DFFTW3F_THREADS -DGR_CTRLPORT -Dgnuradio_lora_EXPORTS -I/home/szu-iot/gr-lora-jkadbear/lib/../include -isystem /usr/local/include  -O3 -DNDEBUG -fPIC   -fvisibility=hidden -std=gnu++11 -o CMakeFiles/gnuradio-lora.dir/demod_impl.cc.o -c /home/szu-iot/gr-lora-jkadbear/lib/demod_impl.cc",
+  "file": "/home/szu-iot/gr-lora-jkadbear/lib/demod_impl.cc"
+},
+{
+  "directory": "/home/szu-iot/gr-lora-jkadbear/build/lib",
+  "command": "/usr/bin/c++  -DFFTW3F_THREADS -DGR_CTRLPORT -Dgnuradio_lora_EXPORTS -I/home/szu-iot/gr-lora-jkadbear/lib/../include -isystem /usr/local/include  -O3 -DNDEBUG -fPIC   -fvisibility=hidden -std=gnu++11 -o CMakeFiles/gnuradio-lora.dir/mod_impl.cc.o -c /home/szu-iot/gr-lora-jkadbear/lib/mod_impl.cc",
+  "file": "/home/szu-iot/gr-lora-jkadbear/lib/mod_impl.cc"
+},
+{
+  "directory": "/home/szu-iot/gr-lora-jkadbear/build/lib",
+  "command": "/usr/bin/c++  -DFFTW3F_THREADS -DGR_CTRLPORT -Dgnuradio_lora_EXPORTS -I/home/szu-iot/gr-lora-jkadbear/lib/../include -isystem /usr/local/include  -O3 -DNDEBUG -fPIC   -fvisibility=hidden -std=gnu++11 -o CMakeFiles/gnuradio-lora.dir/pyramid_demod_impl.cc.o -c /home/szu-iot/gr-lora-jkadbear/lib/pyramid_demod_impl.cc",
+  "file": "/home/szu-iot/gr-lora-jkadbear/lib/pyramid_demod_impl.cc"
+},
+{
+  "directory": "/home/szu-iot/gr-lora-jkadbear/build/lib",
+  "command": "/usr/bin/c++  -DFFTW3F_THREADS -DGR_CTRLPORT -Dgnuradio_lora_EXPORTS -I/home/szu-iot/gr-lora-jkadbear/lib/../include -isystem /usr/local/include  -O3 -DNDEBUG -fPIC   -fvisibility=hidden -std=gnu++11 -o CMakeFiles/gnuradio-lora.dir/decode_impl.cc.o -c /home/szu-iot/gr-lora-jkadbear/lib/decode_impl.cc",
+  "file": "/home/szu-iot/gr-lora-jkadbear/lib/decode_impl.cc"
+},
+{
+  "directory": "/home/szu-iot/gr-lora-jkadbear/build/lib",
+  "command": "/usr/bin/c++  -DFFTW3F_THREADS -DGR_CTRLPORT -Dgnuradio_lora_EXPORTS -I/home/szu-iot/gr-lora-jkadbear/lib/../include -isystem /usr/local/include  -O3 -DNDEBUG -fPIC   -fvisibility=hidden -std=gnu++11 -o CMakeFiles/gnuradio-lora.dir/encode_impl.cc.o -c /home/szu-iot/gr-lora-jkadbear/lib/encode_impl.cc",
+  "file": "/home/szu-iot/gr-lora-jkadbear/lib/encode_impl.cc"
+},
+{
+  "directory": "/home/szu-iot/gr-lora-jkadbear/build/lib",
+  "command": "/usr/bin/c++  -DFFTW3F_THREADS -DGR_CTRLPORT -Dgnuradio_lora_EXPORTS -I/home/szu-iot/gr-lora-jkadbear/lib/../include -isystem /usr/local/include  -O3 -DNDEBUG -fPIC   -fvisibility=hidden -std=gnu++11 -o CMakeFiles/gnuradio-lora.dir/copy_cc_impl.cc.o -c /home/szu-iot/gr-lora-jkadbear/lib/copy_cc_impl.cc",
+  "file": "/home/szu-iot/gr-lora-jkadbear/lib/copy_cc_impl.cc"
+},
+{
+  "directory": "/home/szu-iot/gr-lora-jkadbear/build/swig",
+  "command": "/usr/bin/c++    -O3 -DNDEBUG   -fvisibility=hidden -std=gnu++11 -o CMakeFiles/_lora_swig_doc_tag.dir/_lora_swig_doc_tag.cpp.o -c /home/szu-iot/gr-lora-jkadbear/build/swig/_lora_swig_doc_tag.cpp",
+  "file": "/home/szu-iot/gr-lora-jkadbear/build/swig/_lora_swig_doc_tag.cpp"
+},
+{
+  "directory": "/home/szu-iot/gr-lora-jkadbear/build/swig",
+  "command": "/usr/bin/c++  -DFFTW3F_THREADS -DGR_CTRLPORT -Dlora_swig_EXPORTS -I/home/szu-iot/gr-lora-jkadbear/build/swig -I/home/szu-iot/gr-lora-jkadbear/swig -I/usr/local/include/gnuradio/swig -isystem /usr/include/python3.6m -isystem /usr/local/include -I/home/szu-iot/gr-lora-jkadbear/lib/../include  -O3 -DNDEBUG -fPIC   -fvisibility=hidden -std=gnu++11 -o CMakeFiles/lora_swig.dir/CMakeFiles/lora_swig.dir/lora_swigPYTHON_wrap.cxx.o -c /home/szu-iot/gr-lora-jkadbear/build/swig/CMakeFiles/lora_swig.dir/lora_swigPYTHON_wrap.cxx",
+  "file": "/home/szu-iot/gr-lora-jkadbear/build/swig/CMakeFiles/lora_swig.dir/lora_swigPYTHON_wrap.cxx"
+}
+]

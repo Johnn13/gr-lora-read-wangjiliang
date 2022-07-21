@@ -1,0 +1,135 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classgr_1_1lora_1_1copy__cc__impl" kind="class" language="C++" prot="public">
+    <compoundname>gr::lora::copy_cc_impl</compoundname>
+    <basecompoundref refid="classgr_1_1lora_1_1copy__cc" prot="public" virt="non-virtual">gr::lora::copy_cc</basecompoundref>
+    <includes refid="copy__cc__impl_8h" local="no">copy_cc_impl.h</includes>
+      <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classgr_1_1lora_1_1copy__cc__impl_1ad2dc17029d9b2ea8532a5def46cdc1b1" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int gr::lora::copy_cc_impl::calculate_output_stream_length</definition>
+        <argsstring>(const gr_vector_int &amp;ninput_items)</argsstring>
+        <name>calculate_output_stream_length</name>
+        <param>
+          <type>const gr_vector_int &amp;</type>
+          <declname>ninput_items</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/szu-iot/gr-lora-jkadbear/lib/copy_cc_impl.h" line="35" column="1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classgr_1_1lora_1_1copy__cc__impl_1a8e499d61304d84834c00f8f5cf64b0c0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>gr::lora::copy_cc_impl::copy_cc_impl</definition>
+        <argsstring>(const std::string &amp;len_tag_key)</argsstring>
+        <name>copy_cc_impl</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>len_tag_key</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/szu-iot/gr-lora-jkadbear/lib/copy_cc_impl.h" line="38" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classgr_1_1lora_1_1copy__cc__impl_1a8e355b79445cc77fb1937603c18a52e7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>gr::lora::copy_cc_impl::~copy_cc_impl</definition>
+        <argsstring>()</argsstring>
+        <name>~copy_cc_impl</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/szu-iot/gr-lora-jkadbear/lib/copy_cc_impl.h" line="39" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classgr_1_1lora_1_1copy__cc__impl_1aa23ef3cf83be4ed6f2098640c34016d8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int gr::lora::copy_cc_impl::work</definition>
+        <argsstring>(int noutput_items, gr_vector_int &amp;ninput_items, gr_vector_const_void_star &amp;input_items, gr_vector_void_star &amp;output_items)</argsstring>
+        <name>work</name>
+        <param>
+          <type>int</type>
+          <declname>noutput_items</declname>
+        </param>
+        <param>
+          <type>gr_vector_int &amp;</type>
+          <declname>ninput_items</declname>
+        </param>
+        <param>
+          <type>gr_vector_const_void_star &amp;</type>
+          <declname>input_items</declname>
+        </param>
+        <param>
+          <type>gr_vector_void_star &amp;</type>
+          <declname>output_items</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/szu-iot/gr-lora-jkadbear/lib/copy_cc_impl.h" line="42" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="7">
+        <label>gr::lora::copy_cc_impl</label>
+        <link refid="classgr_1_1lora_1_1copy__cc__impl"/>
+        <childnode refid="8" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>gr::tagged_stream_block</label>
+      </node>
+      <node id="8">
+        <label>gr::lora::copy_cc</label>
+        <link refid="classgr_1_1lora_1_1copy__cc"/>
+        <childnode refid="9" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="10">
+        <label>gr::lora::copy_cc_impl</label>
+        <link refid="classgr_1_1lora_1_1copy__cc__impl"/>
+        <childnode refid="11" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>gr::tagged_stream_block</label>
+      </node>
+      <node id="11">
+        <label>gr::lora::copy_cc</label>
+        <link refid="classgr_1_1lora_1_1copy__cc"/>
+        <childnode refid="12" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/szu-iot/gr-lora-jkadbear/lib/copy_cc_impl.h" line="30" column="1" bodyfile="/home/szu-iot/gr-lora-jkadbear/lib/copy_cc_impl.h" bodystart="29" bodyend="48"/>
+    <listofallmembers>
+      <member refid="classgr_1_1lora_1_1copy__cc__impl_1ad2dc17029d9b2ea8532a5def46cdc1b1" prot="protected" virt="non-virtual"><scope>gr::lora::copy_cc_impl</scope><name>calculate_output_stream_length</name></member>
+      <member refid="classgr_1_1lora_1_1copy__cc__impl_1a8e499d61304d84834c00f8f5cf64b0c0" prot="public" virt="non-virtual"><scope>gr::lora::copy_cc_impl</scope><name>copy_cc_impl</name></member>
+      <member refid="classgr_1_1lora_1_1copy__cc_1ad73cb1bd14b9b2e244ebcae123ba06a9" prot="public" virt="non-virtual"><scope>gr::lora::copy_cc_impl</scope><name>make</name></member>
+      <member refid="classgr_1_1lora_1_1copy__cc_1abce8a3fa43bff022a66e69962e98efa2" prot="public" virt="non-virtual"><scope>gr::lora::copy_cc_impl</scope><name>sptr</name></member>
+      <member refid="classgr_1_1lora_1_1copy__cc__impl_1aa23ef3cf83be4ed6f2098640c34016d8" prot="public" virt="non-virtual"><scope>gr::lora::copy_cc_impl</scope><name>work</name></member>
+      <member refid="classgr_1_1lora_1_1copy__cc__impl_1a8e355b79445cc77fb1937603c18a52e7" prot="public" virt="non-virtual"><scope>gr::lora::copy_cc_impl</scope><name>~copy_cc_impl</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

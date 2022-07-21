@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="decode__impl_8h" kind="file" language="C++">
+    <compoundname>decode_impl.h</compoundname>
+    <includes local="no">iostream</includes>
+    <includes local="no">bitset</includes>
+    <includes refid="decode_8h" local="no">lora/decode.h</includes>
+    <includes refid="utilities_8h" local="yes">utilities.h</includes>
+    <incdepgraph>
+      <node id="39">
+        <label>lora/api.h</label>
+        <link refid="api_8h"/>
+        <childnode refid="40" relation="include">
+        </childnode>
+      </node>
+      <node id="40">
+        <label>gnuradio/attributes.h</label>
+      </node>
+      <node id="38">
+        <label>lora/decode.h</label>
+        <link refid="decode_8h"/>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+      </node>
+      <node id="37">
+        <label>bitset</label>
+      </node>
+      <node id="43">
+        <label>utilities.h</label>
+        <link refid="utilities_8h"/>
+      </node>
+      <node id="41">
+        <label>gnuradio/block.h</label>
+      </node>
+      <node id="35">
+        <label>decode_impl.h</label>
+        <link refid="decode__impl_8h"/>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+      </node>
+      <node id="36">
+        <label>iostream</label>
+      </node>
+      <node id="42">
+        <label>lora/lora.h</label>
+        <link refid="lora_8h"/>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classgr_1_1lora_1_1decode__impl" prot="public">gr::lora::decode_impl</innerclass>
+    <innernamespace refid="namespacegr">gr</innernamespace>
+    <innernamespace refid="namespacegr_1_1lora">gr::lora</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/szu-iot/gr-lora-jkadbear/lib/decode_impl.h"/>
+  </compounddef>
+</doxygen>

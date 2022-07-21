@@ -1,0 +1,20 @@
+id: lora_copy_cc
+label: copy cc
+category: '[lora]'
+templates:
+  imports: import lora
+  make: lora.copy_cc(${len_tag_key})
+parameters:
+- id: len_tag_key
+  label: Len_tag_key
+  default: '""'
+  dtype: string
+inputs:
+- label: in
+  domain: stream
+  dtype: complex
+outputs:
+- label: out
+  domain: stream
+  dtype: complex
+file_format: 1
