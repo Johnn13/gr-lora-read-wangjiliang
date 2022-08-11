@@ -113,7 +113,8 @@ namespace gr
 
     void
     encode_impl::to_gray(std::vector<unsigned short> &symbols)
-    {
+    { // 二进制转换格雷码机制：格雷码的最高位和二进制的最高位是一样的，
+     // 格雷码的其他位可以用二进制对应位和相邻高位的异或得到
       for (int i = 0; i < symbols.size(); i++)
       {
         symbols[i] = (symbols[i] >> 1) ^ symbols[i];
@@ -283,9 +284,9 @@ namespace gr
       const uint8_t *bytes_in_p = pmt::u8vector_elements(bytes, pkt_len);
 
       std::vector<uint8_t> bytes_in(bytes_in_p, bytes_in_p + pkt_len);
-      std::vector<uint8_t> nibbles;
+      std::vector<uint8_t> nibbles; // 半字节
       std::vector<uint8_t> codewords;
-      std::vector<uint8_t> payload_nibbles;
+      std::vector<uint8_t> payload_nibbles;// 
       std::vector<uint16_t> symbols;
 
       if (d_crc)
@@ -303,7 +304,7 @@ namespace gr
         bytes_in.push_back(0);
       }
 
-      whiten(bytes_in, pkt_len);
+      whiten(bytes_in, pkt_len); // 随机序列
 
       // split bytes into separate data nibbles
       for (int i = 0; i < nibble_num; i++)
