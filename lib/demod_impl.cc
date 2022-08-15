@@ -92,7 +92,7 @@ namespace gr {
       if (d_sf == 6) assert(!header);
       assert(d_fft_size_factor > 0);
       assert(((int)fs_bw_ratio) == fs_bw_ratio);
-      d_p = (int) fs_bw_ratio;
+      d_p = (int) fs_bw_ratio; // 采样频率和带宽的比值
 
       if (!header) // implicit header mode
       {
@@ -100,7 +100,7 @@ namespace gr {
         d_packet_symbol_len = 8 + std::max((4+d_cr)*(int)std::ceil((2.0*d_payload_len-d_sf+7+4*d_crc-5*!d_header)/(d_sf-2*d_ldr)), 0);
       }
 
-      d_header_port = pmt::mp("header");
+      d_header_port = pmt::mp("header"); // 返回变量header的值
       message_port_register_in(d_header_port);
       d_out_port = pmt::mp("out");
       message_port_register_out(d_out_port);
@@ -109,9 +109,9 @@ namespace gr {
 
       d_state = S_RESET;
 
-      d_num_symbols = (1 << d_sf);
+      d_num_symbols = (1 << d_sf); // d_num_symbols = 2^sf
       d_num_samples = d_p*d_num_symbols;
-      d_bin_len = d_fft_size_factor*d_num_symbols;
+      d_bin_len = d_fft_size_factor*d_num_symbols; // d_fft_size_factor:零填充相关的参数
       d_fft_size = d_fft_size_factor*d_num_samples;
       d_fft = new fft::fft_complex(d_fft_size, true, 1);
       d_overlaps = OVERLAP_DEFAULT;

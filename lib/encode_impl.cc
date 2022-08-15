@@ -278,9 +278,9 @@ namespace gr
     void
     encode_impl::encode(pmt::pmt_t msg)
     {
-      pmt::pmt_t bytes(pmt::cdr(msg));
+      pmt::pmt_t bytes(pmt::cdr(msg)); // 数据
 
-      size_t pkt_len(0);
+      size_t pkt_len(0); // size_t : unsigned long int
       const uint8_t *bytes_in_p = pmt::u8vector_elements(bytes, pkt_len);
 
       std::vector<uint8_t> bytes_in(bytes_in_p, bytes_in_p + pkt_len);
@@ -290,7 +290,7 @@ namespace gr
       std::vector<uint16_t> symbols;
 
       if (d_crc)
-      {
+      { 
         uint16_t checksum = gr::lora::data_checksum(&bytes_in[0], pkt_len);
         bytes_in.push_back(checksum & 0xFF);
         bytes_in.push_back((checksum >> 8) & 0xFF);
@@ -304,7 +304,7 @@ namespace gr
         bytes_in.push_back(0);
       }
 
-      whiten(bytes_in, pkt_len); // 随机序列
+      whiten(bytes_in, pkt_len); // 白化序列
 
       // split bytes into separate data nibbles
       for (int i = 0; i < nibble_num; i++)
