@@ -65,6 +65,7 @@ namespace gr
           d_crc(crc),
           d_ldr(low_data_rate),
           d_header(header)
+    // gr::io_signature::make(1, 1, sizeof(gr_complex)),设置输入口数量
     {
       assert((d_sf > 5) && (d_sf < 13));
       assert((d_cr > 0) && (d_cr < 5));
@@ -80,9 +81,9 @@ namespace gr
 
       d_whitening_sequence = whitening_sequence;
 
-      d_interleaver_size = d_sf;
+      d_interleaver_size = d_sf; // 设置交织的大小
 
-      d_fft_size = (1 << spreading_factor);
+      d_fft_size = (1 << spreading_factor); // d_fft_size = 2^sf
     }
 
     /*
@@ -95,11 +96,12 @@ namespace gr
     void
     encode_impl::gen_header(std::vector<unsigned char> &nibbles, uint8_t payload_len)
     {
+      // 产生包头
       uint8_t cr_crc = (d_cr << 1) | d_crc;
       uint8_t cks = gr::lora::header_checksum(payload_len, cr_crc);
-      nibbles.push_back(payload_len >> 4);
-      nibbles.push_back(payload_len & 0xF);
-      nibbles.push_back(cr_crc);
+      nibbles.push_back(payload_len >> 4); // 先存 payload_len的高4位
+      nibbles.push_back(payload_len & 0xF);// 后存 payload_len的低4位
+      nibbles.push_back(cr_crc);  // cr_crc的低4~2位存cr，最低位存crc
       nibbles.push_back(cks >> 4);
       nibbles.push_back(cks & 0xF);
     }
@@ -107,10 +109,12 @@ namespace gr
     uint16_t
     encode_impl::calc_sym_num(uint8_t payload_len)
     {
+      // 计算payload_len所需要的symbol个数
       double tmp = 2 * payload_len - d_sf + 7 + 4 * d_crc - 5 * (1 - d_header);
       return 8 + std::max((4 + d_cr) * (uint16_t)ceil(tmp / (d_sf - 2 * d_ldr)), 0);
     }
 
+    // bin2Gray
     void
     encode_impl::to_gray(std::vector<unsigned short> &symbols)
     { // 二进制转换格雷码机制：格雷码的最高位和二进制的最高位是一样的，
@@ -121,9 +125,10 @@ namespace gr
       }
     }
 
+    // Gray2bin
     void
     encode_impl::from_gray(std::vector<unsigned short> &symbols)
-    {
+    {// 格雷解码
       for (int i = 0; i < symbols.size(); i++)
       {
         symbols[i] = symbols[i] ^ (symbols[i] >> 16);
@@ -139,7 +144,7 @@ namespace gr
     encode_impl::whiten(std::vector<unsigned char> &bytes, uint8_t len)
     {
       for (int i = 0; i < len && i < whitening_sequence_length; i++)
-      {
+      {// 对每个字节与白化序列进行异或
         bytes[i] = ((unsigned char)(bytes[i] & 0xFF) ^ d_whitening_sequence[i]) & 0xFF;
       }
     }
@@ -158,8 +163,9 @@ namespace gr
     encode_impl::print_bitwise_u16(std::vector<unsigned short> &buffer)
     {
       for (int i = 0; i < buffer.size(); i++)
-      {
+      {// std::bitset<16>(buffer[i] & 0xFFFF) 生成buffer[i]的二进制形式
         std::cout << i << "\t" << std::bitset<16>(buffer[i] & 0xFFFF) << "\t";
+        // 将buffer[i]的十六进制输出
         std::cout << std::hex << (buffer[i] & 0xFFFF) << std::endl;
       }
     }
@@ -266,7 +272,7 @@ namespace gr
 
     void
     encode_impl::print_payload(std::vector<unsigned char> &payload)
-    {
+    {// 按十六进制打印数据
       std::cout << "Encoded LoRa packet (hex): ";
       for (int i = 0; i < payload.size(); i++)
       {
@@ -278,10 +284,10 @@ namespace gr
     void
     encode_impl::encode(pmt::pmt_t msg)
     {
-      pmt::pmt_t bytes(pmt::cdr(msg)); // 数据
+      pmt::pmt_t bytes(pmt::cdr(msg));
 
       size_t pkt_len(0); // size_t : unsigned long int
-      const uint8_t *bytes_in_p = pmt::u8vector_elements(bytes, pkt_len);
+      const uint8_t *bytes_in_p = pmt::u8vector_elements(bytes, pkt_len); // 拿到pkt_len
 
       std::vector<uint8_t> bytes_in(bytes_in_p, bytes_in_p + pkt_len);
       std::vector<uint8_t> nibbles; // 半字节
@@ -290,25 +296,25 @@ namespace gr
       std::vector<uint16_t> symbols;
 
       if (d_crc)
-      { 
+      { // checksum是payload的crc结果，为unsigned short 16位，分成8位，8位放入bytes_in中
         uint16_t checksum = gr::lora::data_checksum(&bytes_in[0], pkt_len);
         bytes_in.push_back(checksum & 0xFF);
         bytes_in.push_back((checksum >> 8) & 0xFF);
       }
 
-      uint16_t sym_num = calc_sym_num(pkt_len);
-      uint16_t nibble_num = d_sf - 2 + (sym_num - 8) / (d_cr + 4) * (d_sf - 2 * d_ldr);
-      uint16_t redundant_num = ceil((nibble_num - 2 * bytes_in.size()) / 2);
+      uint16_t sym_num = calc_sym_num(pkt_len); //计算所需要的symbol个数
+      uint16_t nibble_num = d_sf - 2 + (sym_num - 8) / (d_cr + 4) * (d_sf - 2 * d_ldr); // 计算填充所有symbol所需要的nibbles数
+      uint16_t redundant_num = ceil((nibble_num - 2 * bytes_in.size()) / 2); // 添加冗余的nibble到data里面
       for (int i = 0; i < redundant_num; i++)
       {
-        bytes_in.push_back(0);
+        bytes_in.push_back(0); //填充0
       }
 
       whiten(bytes_in, pkt_len); // 白化序列
 
       // split bytes into separate data nibbles
       for (int i = 0; i < nibble_num; i++)
-      {
+      {// 数据的低4位先存入payload_nibbles，再存高4位
         if (i % 2 == 0)
         {
           payload_nibbles.push_back(bytes_in[i / 2] & 0xF);
@@ -321,7 +327,7 @@ namespace gr
 
       if (d_header)
       {
-        gen_header(nibbles, pkt_len);
+        gen_header(nibbles, pkt_len); // 注意：这里传入的是nibbles
       }
 
 #if DEBUG_OUTPUT
@@ -331,8 +337,9 @@ namespace gr
       print_bitwise_u8(payload_nibbles);
 #endif
 
-      nibbles.insert(nibbles.end(), payload_nibbles.begin(), payload_nibbles.end());
-      hamming_encode(nibbles, codewords);
+      nibbles.insert(nibbles.end(), payload_nibbles.begin(), payload_nibbles.end()); // 将payload_nibbles插入到nibbles后面
+      // 注意：如果有header的话，nibbles前面先是header，后面才是payload
+      hamming_encode(nibbles, codewords); // 使用nibbles生成codewords
 
 #if DEBUG_OUTPUT
       std::cout << "Codewords:" << std::endl;
@@ -346,7 +353,7 @@ namespace gr
       print_bitwise_u16(symbols);
 #endif
 
-      from_gray(symbols);
+      from_gray(symbols); // 格雷解码
 
 #if DEBUG_OUTPUT
       std::cout << "Modulated Symbols: " << std::endl;
@@ -354,9 +361,9 @@ namespace gr
 #endif
 
       pmt::pmt_t output = pmt::init_u16vector(symbols.size(), symbols);
-      pmt::pmt_t msg_pair = pmt::cons(pmt::make_dict(), output);
+      pmt::pmt_t msg_pair = pmt::cons(pmt::make_dict(), output); // pmt::cons : construct new pair
 
-      message_port_pub(d_out_port, msg_pair);
+      message_port_pub(d_out_port, msg_pair); //订阅d_out_port端口，发送msg_pair
     }
 
   } /* namespace lora */

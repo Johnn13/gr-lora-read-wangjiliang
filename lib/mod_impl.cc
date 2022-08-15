@@ -51,24 +51,27 @@ namespace gr {
     {
       assert((d_sf > 5) && (d_sf < 13));
 
-      d_in_port = pmt::mp("in");
+      d_in_port = pmt::mp("in"); // return the symbol whose name is "In"
       message_port_register_in(d_in_port);
-      set_msg_handler(d_in_port, boost::bind(&mod_impl::modulate, this, _1));
+      set_msg_handler(d_in_port, boost::bind(&mod_impl::modulate, this, _1)); // 订阅端口d_in_port，并将这个端口绑定到消息处理模块modulate上
 
-      d_out_port = pmt::mp("out");
+      d_out_port = pmt::mp("out");// return the symbol whose name is "Out"
       message_port_register_out(d_out_port);
 
-      d_fft_size = (1 << d_sf);
+      d_fft_size = (1 << d_sf); // d_fft_size = 2^sf
 
-      float phase = -M_PI;
+      float phase = -M_PI; // 起始相位 = -pi
       double accumulator = 0;
 
       for (int i = 0; i < 2*d_fft_size; i++)
       {
+        // 生成basic upchirp 和 downchirp
         accumulator += phase;
-        d_downchirp.push_back(gr_complex(std::conj(std::polar(1.0, accumulator))));
-        d_upchirp.push_back(gr_complex(std::polar(1.0, accumulator)));
+        d_downchirp.push_back(gr_complex(std::conj(std::polar(1.0, accumulator)))); // 取幅值为1，相位为accumulator的复数的共轭
+        d_upchirp.push_back(gr_complex(std::polar(1.0, accumulator)));// 取幅值为1，相位为accumulator的复数
         phase += (2*M_PI)/d_fft_size;
+        // 最后生成的 basic upchirp是由相位从 -pi到pi，幅值为1的复数
+        // basic downchirp是由相位从pi到-pi，幅值为1的复数
       }
 
     }
@@ -83,23 +86,24 @@ namespace gr {
     void
     mod_impl::modulate (pmt::pmt_t msg)
     {
-      pmt::pmt_t symbols(pmt::cdr(msg));
+      pmt::pmt_t symbols(pmt::cdr(msg)); // 将in端口的message放到symbol中
 
-      size_t pkt_len(0);
-      const uint16_t* symbols_in = pmt::u16vector_elements(symbols, pkt_len);
-      d_iq_out.resize(0);
+      size_t pkt_len(0); // size_t: unsigned long 
+      const uint16_t* symbols_in = pmt::u16vector_elements(symbols, pkt_len); // 得到pkt_len的大小
+      d_iq_out.resize(0); // 将d_iq_out重置为长度为0的vector
 
       std::vector<gr_complex> iq_out;
 
       // Preamble
       for (int i = 0; i < NUM_PREAMBLE_CHIRPS*d_fft_size; i++)
-      {
-        iq_out.push_back(d_upchirp[(i) % d_fft_size]);
+      { // NUM_PREAMBLE_CHIRPS = 8
+        iq_out.push_back(d_upchirp[(i) % d_fft_size]); // 忘iq_out塞入8个upchirp
       }
 
       // Sync Word 0
       for (int i = 0; i < d_fft_size; i++)
-      {
+      {// d_sync_word & 0xF0 保留 d_sync_word高4位
+      // (8*((d_sync_word & 0xF0) >> 4) + i) 相当于施加的初始频率
         iq_out.push_back(d_upchirp[(8*((d_sync_word & 0xF0) >> 4) + i) % d_fft_size]);
       }
 
@@ -110,7 +114,7 @@ namespace gr {
       }
 
       // SFD Downchirps
-      for (int i = 0; i < (2*d_fft_size+d_fft_size/4); i++)
+      for (int i = 0; i < (2*d_fft_size+d_fft_size/4); i++) // MAGIC -- adjusting for the SFD quarter chirp
       {
         iq_out.push_back(d_downchirp[(i) % d_fft_size]);
       }
@@ -120,20 +124,21 @@ namespace gr {
       {
         for (int j = 0; j < d_fft_size; j++)
         {
-          iq_out.push_back(d_upchirp[(symbols_in[i] + j) % d_fft_size]); // MAGIC -- adjusting for the SFD quarter chirp
+          iq_out.push_back(d_upchirp[(symbols_in[i] + j) % d_fft_size]); 
         }
       }
 
       // Prepend zero-magnitude samples
-      d_iq_out.insert(d_iq_out.begin(), 4*d_fft_size, gr_complex(std::polar(0.0, 0.0)));
+      d_iq_out.insert(d_iq_out.begin(), 4*d_fft_size, gr_complex(std::polar(0.0, 0.0))); // 放入4个chirp长度的幅度为0、相位为0的复数
 
-      // Append samples to IQ output buffer
+      // Append samples to IQ output buffer 将样本附加到 IQ输出缓冲区 ： d_iq_out
       for (int i = 0; i < iq_out.size(); i++)
       {
         d_iq_out.push_back(iq_out[i]);  // Writing to buffer separately for now to expose local packet for debugging
       }
       
       // Append zero-magnitude samples to kick squelch in simulation
+      // 在d_iq_out前面加入的零幅值样本是为了在模拟中去噪
       d_iq_out.insert(d_iq_out.end(), 4*d_fft_size+128, gr_complex(std::polar(0.0, 0.0)));
 
       // Uncomment to write out modulated payload to disk
