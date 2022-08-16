@@ -57,6 +57,8 @@ namespace gr {
 
     /*
      * The private constructor
+      初始化了f_raw,f_fft,f_up_windowless,fft_up,fft_down
+        以及sf,header等
      */
     demod_impl::demod_impl( uint8_t   spreading_factor,
                             bool      header,
@@ -94,13 +96,13 @@ namespace gr {
       assert(((int)fs_bw_ratio) == fs_bw_ratio);
       d_p = (int) fs_bw_ratio; // 采样频率和带宽的比值
 
-      if (!header) // implicit header mode
+      if (!header) // implicit header mode 无包头
       {
         // calculate the total number of symbols in a packet
         d_packet_symbol_len = 8 + std::max((4+d_cr)*(int)std::ceil((2.0*d_payload_len-d_sf+7+4*d_crc-5*!d_header)/(d_sf-2*d_ldr)), 0);
       }
 
-      d_header_port = pmt::mp("header"); // 返回变量header的值
+      d_header_port = pmt::mp("header"); // 返回变量header的值，header在参数
       message_port_register_in(d_header_port);
       d_out_port = pmt::mp("out");
       message_port_register_out(d_out_port);
@@ -110,13 +112,13 @@ namespace gr {
       d_state = S_RESET;
 
       d_num_symbols = (1 << d_sf); // d_num_symbols = 2^sf
-      d_num_samples = d_p*d_num_symbols;
-      d_bin_len = d_fft_size_factor*d_num_symbols; // d_fft_size_factor:零填充相关的参数
+      d_num_samples = d_p*d_num_symbols; // d_num_samples = 采样频率和带宽的比值 * 2^sf
+      d_bin_len = d_fft_size_factor*d_num_symbols; // d_fft_size_factor:零填充的比例
       d_fft_size = d_fft_size_factor*d_num_samples;
       d_fft = new fft::fft_complex(d_fft_size, true, 1);
       d_overlaps = OVERLAP_DEFAULT;
       d_offset = 0;
-      d_preamble_drift_max = d_fft_size_factor * (d_ldr ? 2 : 1);
+      d_preamble_drift_max = d_fft_size_factor * (d_ldr ? 2 : 1); // 两个fft bin最大容忍误差
 
       d_window = fft::window::build(fft::window::WIN_KAISER, d_num_samples, d_beta);
 
@@ -263,6 +265,7 @@ namespace gr {
     void
     demod_impl::dynamic_compensation(std::vector<uint16_t>& compensated_symbols)
     {
+      // 用来验证是否开启ldr，如果有需要丢掉低2位
       float modulus   = d_ldr ? 4.0 : 1.0;
       float bin_drift = 0;
       float bin_comp  = 0;
@@ -276,9 +279,10 @@ namespace gr {
         bin_drift = gr::lora::fpmod(v - v_last, modulus);
 
         // compensate bin drift
+        // bin_drift 是低2位(开启ldr)，或者是0(不开启ldr)
         if (bin_drift < modulus / 2) bin_comp -= bin_drift;
         else bin_comp -= (bin_drift - modulus);
-        v_last = v;
+        v_last = v; // v_last有什么用？
         compensated_symbols.push_back(gr::lora::pmod(round(gr::lora::fpmod(v + bin_comp, d_num_symbols)), d_num_symbols));
       }
     }
@@ -296,13 +300,13 @@ namespace gr {
                        gr_vector_const_void_star &input_items,
                        gr_vector_void_star &output_items)
     {
-      if (ninput_items[0] < DEMOD_HISTORY_DEPTH*d_num_samples) return 0;
-      const gr_complex *in0 = (const gr_complex *) input_items[0];
-      const gr_complex *in  = &in0[(DEMOD_HISTORY_DEPTH-1)*d_num_samples];
+      if (ninput_items[0] < DEMOD_HISTORY_DEPTH*d_num_samples) return 0; //如果第0个输入流item个数小于DEMOD_HISTORY_DEPTH*d_num_samples
+      const gr_complex *in0 = (const gr_complex *) input_items[0]; // 拿出第0个输入流的地址
+      const gr_complex *in  = &in0[(DEMOD_HISTORY_DEPTH-1)*d_num_samples]; // 从第0个输入流 拿取 d_num_samples个item放到in里面
       unsigned int  *out    = (unsigned int   *) output_items[0];
 
 
-      unsigned int num_consumed   = d_num_samples;
+      unsigned int num_consumed   = d_num_samples; // 每次从输入流消耗掉的item个数 = d_num_samples
       unsigned int max_idx        = 0;
       unsigned int max_idx_sfd    = 0;
       bool         preamble_found = false;
@@ -336,7 +340,7 @@ namespace gr {
 
       // Enable to write IQ to disk for debugging
       #if DUMP_IQ
-        f_up_windowless.write((const char*)&up_block[0], d_num_samples*sizeof(gr_complex));
+        f_up_windowless.write((const char*)&up_block[0], d_num_samples*sizeof(gr_complex)); // 将每次从输入流拿取的
       #endif
 
       // Windowing
@@ -349,21 +353,24 @@ namespace gr {
 
       // Preamble and Data FFT
       // If d_fft_size_factor is greater than 1, the rest of the sample buffer will be zeroed out and blend into the window
-      memset(d_fft->get_inbuf(),            0, d_fft_size*sizeof(gr_complex));
+      memset(d_fft->get_inbuf(),            0, d_fft_size*sizeof(gr_complex)); //如果d_fft_size > d_num_samples 后面的点就是零填充
       memcpy(d_fft->get_inbuf(), &up_block[0], d_num_samples*sizeof(gr_complex));
-      d_fft->execute();
+      d_fft->execute(); //执行长度为d_fft_size的fft运算
       #if DUMP_IQ
         f_fft.write((const char*)d_fft->get_outbuf(), d_fft_size*sizeof(gr_complex));
       #endif
 
       // Take argmax of returned FFT (similar to MFSK demod)
-      max_idx = search_fft_peak(d_fft->get_outbuf(), fft_res_mag, fft_res_add, fft_res_add_c, &max_val);
+      // fft_res_mag = d_fft_size
+      // fft_res_add = float * d_bin_len
+      // fft_res_add_c =  complex * d_bin_len
+      max_idx = search_fft_peak(d_fft->get_outbuf(), fft_res_mag, fft_res_add, fft_res_add_c, &max_val); // 注意：这里更新了max_val，max是最大幅值
 
-      d_argmax_history.insert(d_argmax_history.begin(), max_idx);
+      d_argmax_history.insert(d_argmax_history.begin(), max_idx); // 将max_idx插入d_argmax_history
 
       if (d_argmax_history.size() > REQUIRED_PREAMBLE_CHIRPS)
       {
-        d_argmax_history.pop_back();
+        d_argmax_history.pop_back(); // 如果d_argmax_history中的index个数 > REQUIRED_PREAMBLE_CHIRPS，此时不放入 index
       }
 
       switch (d_state) {
@@ -404,21 +411,23 @@ namespace gr {
 
 
       // Looks for the same symbol appearing consecutively, signifying the LoRa preamble
+      // 寻找连续出现的相同符号，表示 LoRa 前导码
       case S_DETECT_PREAMBLE:
       {
-        d_preamble_idx = d_argmax_history[0];
+        d_preamble_idx = d_argmax_history[0]; // 从d_argmax_history[0]开始拿
 
         #if DEBUG >= DEBUG_VERBOSE
           std::cout << "PREAMBLE " << d_argmax_history[0] << std::endl;
         #endif
 
         // Check for discontinuities that exceed some tolerance
+        // 检查超过某些容忍度的不连续性
         preamble_found = true;
         for (int i = 1; i < REQUIRED_PREAMBLE_CHIRPS; i++)
-        {
+        {//每轮都是拿 d_argmax_history[0]进行比较
           unsigned int dis = gr::lora::pmod(int(d_preamble_idx) - int(d_argmax_history[i]), d_fft_size);
           if (dis > d_preamble_drift_max && dis < d_fft_size-d_preamble_drift_max)
-          {
+          { // d_preamble_drift_max < dis < d_fft_size-d_preamble_drift_max
             preamble_found = false;
           }
         }
@@ -475,7 +484,8 @@ namespace gr {
 
         // If SFD is detected
         if (max_val_sfd > max_val)
-        {
+        { // max_val在365行处进行改变
+        // max_idx = search_fft_peak(d_fft->get_outbuf(), fft_res_mag, fft_res_add, fft_res_add_c, &max_val); 
           int idx = max_idx_sfd;
           if (max_idx_sfd > d_bin_len / 2) {
             idx = max_idx_sfd - d_bin_len;
@@ -484,7 +494,7 @@ namespace gr {
 
           // refine CFO
           volk_32fc_x2_multiply_32fc(up_block, 
-            &in0[(int)round((DEMOD_HISTORY_DEPTH-1-5.25)*d_num_samples) + num_consumed],
+            &in0[(int)round((DEMOD_HISTORY_DEPTH-1-5.25)*d_num_samples) + num_consumed], // 拿到倒数最后一个basic up chirp进行计算CFO
             &d_downchirp[0], d_num_samples);
           memset(d_fft->get_inbuf(),        0, d_fft_size*sizeof(gr_complex));
           memcpy(d_fft->get_inbuf(), up_block, d_num_samples*sizeof(gr_complex));
@@ -533,7 +543,7 @@ namespace gr {
           if (!d_header || (d_header && d_header_received))
           {
             if (d_header_received && !d_header_valid)
-            {
+            {// 如果有接受到包头、且包头没有通过decode的包头crc校验，这报错
               d_state = S_RESET;
 
               #if DEBUG >= DEBUG_INFO
@@ -617,7 +627,7 @@ namespace gr {
         f_raw.write((const char*)&in[0], num_consumed*sizeof(gr_complex));
       #endif
 
-      consume_each (num_consumed);
+      consume_each (num_consumed); // 如果每个输入流的流个数相同，则用consume_each
 
       volk_free(down_block);
       volk_free(up_block);

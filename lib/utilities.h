@@ -46,7 +46,7 @@ namespace gr {
      *          divisor
      */
     inline float fpmod(float x, float n)
-    {
+    { //等同于x对n取余
       return std::fmod(std::fmod(x, n) + n, n);
     }
 
